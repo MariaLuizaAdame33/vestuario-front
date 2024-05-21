@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {  FlatList, Image, ImageBackground, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
+import Head from "../components/Head";
 
 interface Roupas {
     id: number;
@@ -19,13 +20,13 @@ interface Roupas {
 const renderItem = ({ item }: { item: Roupas }) => (
     <TouchableOpacity style={styles.item}>
         <Text style={styles.Texto1}>{item.tecido}</Text>
-        <Text style={styles.Textovalor}>{item.valor}</Text>
-        <Text>{item.ingredientes}</Text>
-        <Image source={item.image} style={styles.images}/>
-        <TouchableOpacity>
-                    <Image source={require('./assets/images/batata.jpeg')}
-                        style={styles.footerIcon} />
-                </TouchableOpacity>
+        <Text style={styles.Texto1}>{item.tamanho}</Text>
+        <Text style={styles.Texto1}>{item.cor}</Text>
+        <Text style={styles.Texto1}>{item.categoria}</Text>
+        <Text style={styles.Texto1}>{item.fabricacao}</Text>
+        <Text style={styles.Texto1}>{item.estacao}</Text>
+       
+
         
     </TouchableOpacity>
 );
@@ -33,19 +34,19 @@ const renderItem = ({ item }: { item: Roupas }) => (
 
 function ListagemRoupas(): React.JSX.Element {
 
-    const [produtos, setProdutos] = useState<Produto[]>([]);
+    const [roupas, setRoupas] = useState<Produto[]>([]);
 
 
     useEffect(() => {
-        listarProdutos();
+        ListagemRoupas();
     }, []);
 
 
     const listarProdutos = async () => {
         try {
-            const response = await axios.get('http://10.137.11.209:8000/api/produtos');
+            const response = await axios.get('http://10.137.11.203:8000/api/vizualizar');
             if (response.status === 200) {
-                setProdutos(response.data);
+                setRoupas(response.data);
                 
             }
         } catch (error) {
@@ -57,40 +58,20 @@ function ListagemRoupas(): React.JSX.Element {
 
     return (
         <View style={styles.container}>
-            <ImageBackground source={require('./assets/images/fundo.jpg')} resizeMode="cover" style={styles.imagebackground}>
-            <StatusBar backgroundColor="#FF1493" barStyle='light-content' />
+           
             <View style={styles.header}>
-                <Text style={styles.headerText} >𝓐𝓻𝓸𝓶𝓪 𝓮 𝓼𝓪𝓫𝓸𝓻𝓮𝓼</Text>
-                <Text style={styles.Textocima}>𝐂𝐀𝐑𝐃𝐀𝐏𝐈𝐎 🍴</Text>
+                <Text style={styles.headerText} >Ame Fashion</Text>
+                <Text style={styles.Textocima}></Text>
             </View>
             <FlatList
-                data={produtos}
+                data={roupas}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id.toString()}
+
             />
-            </ImageBackground>
+            
 
-            <View style={styles.footer}>
-                <TouchableOpacity>
-                    <Image source={require('./assets/images/home.png')}
-                        style={styles.footerIcon} />
-                </TouchableOpacity>
 
-                <TouchableOpacity onPress={()=>navigation.navigate('CadastroProdutos')}>
-                    <Image source={require('./assets/images/profile.png')}
-                        style={styles.footerIcon} />
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={()=>navigation.navigate('CadastroProdutos')}>
-                    <Image source={require('./assets/images/cardapio.webp')}
-                        style={styles.footerIcon} />
-                </TouchableOpacity>
-
-                <TouchableOpacity >
-                    <Image source={require('./assets/images/pedidos.webp')}
-                        style={styles.footerIcon} />
-                </TouchableOpacity>
-            </View>
 
         </View>
     );
