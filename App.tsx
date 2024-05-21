@@ -1,6 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import CadastroScreen from './src/screens/CadastroScreen';
+import EditarRoupas from './src/screens/EditarRoupas';
 
 
 const Stack = createStackNavigator();
@@ -8,12 +9,7 @@ const Stack = createStackNavigator();
 
 function App(): React.ReactElement {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name='Cadastro' component={CadastroScreen} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </NavigationContainer>
-
+    <EditarRoupas />
   );
 }
 

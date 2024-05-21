@@ -84,10 +84,6 @@ console.log(formData)
 
         </View>
 
-       
-
-        
-    
 
     );
 }
