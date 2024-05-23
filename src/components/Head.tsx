@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 function Head(): React.JSX.Element {
     return (
         <View style={styles.header}>
-            <Text style={styles.headertext}>App Exemplo</Text>
+            <Text style={styles.headertext}>Ame Fashion</Text>
         </View>
     );
 }

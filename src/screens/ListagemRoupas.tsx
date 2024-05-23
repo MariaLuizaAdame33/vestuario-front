@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {  FlatList, Image, ImageBackground, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import Head from "../components/Head";
+import Footer from '../components/Footer';
 
 interface Roupas {
     id: number;
@@ -34,7 +35,7 @@ const renderItem = ({ item }: { item: Roupas }) => (
 
 function ListagemRoupas(): React.JSX.Element {
 
-    const [roupas, setRoupas] = useState<Produto[]>([]);
+    const [roupas, setRoupas] = useState<Roupas[]>([]);
 
 
     useEffect(() => {
@@ -42,11 +43,12 @@ function ListagemRoupas(): React.JSX.Element {
     }, []);
 
 
-    const listarProdutos = async () => {
+    const ListagemRoupas = async () => {
         try {
             const response = await axios.get('http://10.137.11.203:8000/api/vizualizar');
+            console.log(response.data.data)
             if (response.status === 200) {
-                setRoupas(response.data);
+                setRoupas(response.data.data);
                 
             }
         } catch (error) {
@@ -71,7 +73,7 @@ function ListagemRoupas(): React.JSX.Element {
             />
             
 
-
+            <Footer/>
 
         </View>
     );

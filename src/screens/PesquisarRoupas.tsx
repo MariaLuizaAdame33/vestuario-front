@@ -1,7 +1,9 @@
-import React from "react";
-import { FlatList, Image, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useState } from "react";
+import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Head from "../components/Head";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import Footer from "../components/Footer";
 
 interface Roupas {
     id: number;
@@ -14,55 +16,65 @@ interface Roupas {
     descricao: string;
 }
 
-function PesquisarRoupas(): React.JSX.Element {
+function RoupasPesquisar(): React.JSX.Element {
 
     const navigation = useNavigation();
 
-    const produtos: Produto[] = [
+    const roupas: Roupas[] = [
         {
             id: 1,
-            tecido: 'algodão',
-            tamanho: 'MM',
-            cor: 'Amarelo',
+            tecido: 'Algodão',
+            tamanho: 'M',
+            cor: 'Roxo',
             categoria: 'Adulto',
-            fabricacao: 'BR',
-            estacao: 'Frio',
-            descricao: ' Camiseta Linda e confortavel'
+            fabricacao: 'China',
+            estacao: 'Inverno',
+            descricao: 'Roupa super quentinha',
         },
         {
             id: 2,
-            tecido: 'laicra',
-            tamanho: 'GG',
-            cor: 'Roxo',
+            tecido: 'Algodão',
+            tamanho: 'G',
+            cor: 'Rosa',
             categoria: 'Kids',
-            fabricacao: 'BR',
-            estacao: 'Frio',
-            descricao: ' Camiseta Linda e confortavel'
+            fabricacao: 'Brasil',
+            estacao: 'Calor',
+            descricao: 'Roupa super confortável',
         },
     ]
 
-    const selecionarProduto = (roupas: Roupas) =>{
-        navigation.navigate('EditarRoupa',{roupas});
+
+    const PesquisarRoupas = async () => {
+        const [roupas, setRoupas] = useState<Roupas[]>([]);
+        try {
+            const response = await axios.get('http://10.137.11.202:8000/api/pesquisarCategoria');
+            if (response.status === 200) {
+                console.log
+                setRoupas(response.data.data);
+                
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    const renderItem = ({ item }: {item: Produto }) => {
+
+    const renderItem = ({ item }: {item: Roupas }) => {
         return (
             <TouchableOpacity style={styles.menuItem}
-            onPress={()=> selecionarProduto(item)}>
-                <Image source={require('../assets/images/hamburger.png')}
-                style={styles.image}/>
+             onPress={() => PesquisarRoupas}>
                 <View style={styles.itemDetails}>
                     <Text style={styles.tissue}>{item.tecido}</Text>
                     <Text style={styles.size}>{item.tamanho}</Text>
                     <Text style={styles.color}>{item.cor}</Text>
                     <Text style={styles.category}>{item.categoria}</Text>
-                    <Text style={styles.manufacturing}>{item.fabricacao}</Text>
-                    <Text style={styles.station}>{item.estacao}</Text>
-                    <Text style={styles.description}>{item.descricao}</Text>
-                
+                    <Text style={styles.descrition}>{item.descricao}</Text>
+                    <Text style={styles.color}>{item.cor}</Text>
                 </View>
             </TouchableOpacity>
         );
+
+        <Footer/>
     }
 
     return (
@@ -70,14 +82,14 @@ function PesquisarRoupas(): React.JSX.Element {
             <StatusBar backgroundColor={'red'} barStyle={'light-content'}/>
             <Head/>
             <FlatList
-               data={produtos}
+               data={roupas}
                renderItem={renderItem}
                keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
                contentContainerStyle={styles.menuList}
                />
-               
         </View>
     );
+
 }
 
 const styles = StyleSheet.create({
@@ -106,28 +118,29 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold'
     },
-    description: {
+    size: {
         fontSize: 14,
         color: '#666'
     },
-    size: {
+    color: {
         fontSize: 16,
         fontWeight: 'bold',
         marginTop: 5
-    },
-    color: {
-        fontSize: 16,
-        fontWeight: 'bold'
     },
     category: {
         fontSize: 16,
         fontWeight: 'bold'
     },
-    manufacturing: {
-        fontSize: 16,
-        fontWeight: 'bold'
+    fabrication: {
+        fontSize: 14,
+        color: '#666'
     },
     station: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginTop: 5
+    },
+    descrition: {
         fontSize: 16,
         fontWeight: 'bold'
     },
@@ -136,4 +149,5 @@ const styles = StyleSheet.create({
     }
 })
 
-export default PesquisarRoupas;
+export default RoupasPesquisar;
+
