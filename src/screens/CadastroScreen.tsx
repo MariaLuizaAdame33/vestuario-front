@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import Footer from '../components/Footer';
 function CadastroScreen():JSX.Element{
 
 
@@ -26,7 +27,7 @@ function CadastroScreen():JSX.Element{
        
 
 console.log(formData)
-         const response = await axios.post('http://10.137.11.203:8000/api/cadastroRoupas',formData,{
+         const response = await axios.post('http://10.137.11.203/vestuario/public/api/cadastroRoupas',formData,{
             headers:{
                 'Content-Type':'multipart/form-data'
             }
@@ -81,9 +82,9 @@ console.log(formData)
                 </TouchableOpacity>
 
             </View>
-
+            <Footer/>
         </View>
-
+       
 
     );
 }
@@ -116,12 +117,12 @@ const styles = StyleSheet.create({
     },
 
     footer: {
-        borderTopWidth: 0.2,
+        borderTopWidth: 0.10,
         backgroundColor: 'white',
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        paddingVertical: 10,
+        paddingVertical: 50,
         marginVertical:270
     },
     footerIcon: {

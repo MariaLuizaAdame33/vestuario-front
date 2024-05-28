@@ -15,10 +15,6 @@ function App(): React.ReactElement {
   return (
     <NavigationContainer>
         <Stack.Navigator>
-        <Stack.Screen name='Home' component={Home} options={{ headerShown:false }}/>
-          <Stack.Screen name='Profile' component={Profile} options={{ headerShown:false }}/>
-          <Stack.Screen name='Pesquisar' component={PesquisarRoupas} options={{ headerShown:false }}/>
-          <Stack.Screen name='Editar' component={EditarRoupas} options={{ headerShown:false }}/>  
         <Stack.Screen name='Listagem' component={ListagemRoupas} options={{ headerShown:false }}/>
         </Stack.Navigator>
       </NavigationContainer>

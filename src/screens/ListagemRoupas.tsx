@@ -1,9 +1,9 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import {  FlatList, Image, ImageBackground, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {  FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-import Head from "../components/Head";
-import Footer from '../components/Footer';
+import { TextInput } from 'react-native-gesture-handler';
+
 
 interface Roupas {
     id: number;
@@ -14,29 +14,16 @@ interface Roupas {
     fabricacao: string;
     estacao: string;
     descricao: string;
+    
 }
 
 
 
-const renderItem = ({ item }: { item: Roupas }) => (
-    <TouchableOpacity style={styles.item}>
-        <Text style={styles.Texto1}>{item.tecido}</Text>
-        <Text style={styles.Texto1}>{item.tamanho}</Text>
-        <Text style={styles.Texto1}>{item.cor}</Text>
-        <Text style={styles.Texto1}>{item.categoria}</Text>
-        <Text style={styles.Texto1}>{item.fabricacao}</Text>
-        <Text style={styles.Texto1}>{item.estacao}</Text>
-       
-
-        
-    </TouchableOpacity>
-);
-
-
 function ListagemRoupas(): React.JSX.Element {
 
-    const [roupas, setRoupas] = useState<Roupas[]>([]);
-
+    const [roupas, setRoupas] = useState<Produto[]>([]);
+    const [pesquisa, setPesquisa] = useState<string>('');
+    
 
     useEffect(() => {
         ListagemRoupas();
@@ -45,9 +32,9 @@ function ListagemRoupas(): React.JSX.Element {
 
     const ListagemRoupas = async () => {
         try {
-            const response = await axios.get('http://10.137.11.203:8000/api/vizualizar');
-            console.log(response.data.data)
+            const response = await axios.get('http://10.137.11.203/vestuario/public/api/vizualizar');
             if (response.status === 200) {
+                console.log(response.data.data)
                 setRoupas(response.data.data);
                 
             }
@@ -56,7 +43,42 @@ function ListagemRoupas(): React.JSX.Element {
         }
     }
 
+    const handleDelete = async (id: number) => {
+        try {
+          const response = await axios.get('http://10.137.11.203/vestuario/public/api/excluir/'+id);
+          
+          console.log(response.data);
+          //setRoupas(roupas.filter((roupa) => roupa.id !== id));
+          //setFilteredRoupas(filteredRoupas.filter((roupa) => roupa.id !== id));
+        } catch (error) {
+            console.log(error)
+          // console.error(`Erro: ${error.message}`);
+          // if (error.response) {
+          //   console.error(`Status: ${error.response.status} ${error.response.statusText}`);
+          // }
+        }
+      };
+
     const navigation= useNavigation();
+
+    const renderItem = ({ item }: { item: Roupas }) => {
+        return (
+          <View style={styles.container}>
+             <Text style={styles.Texto1}>{item.tecido}</Text>
+            <Text style={styles.Texto1}>{item.tamanho}</Text>
+            <Text style={styles.Texto1}>{item.cor}</Text>
+            <Text style={styles.Texto1}>{item.categoria}</Text>
+            <Text style={styles.Texto1}>{item.fabricacao}</Text>
+            <Text style={styles.Texto1}>{item.estacao}</Text>
+            <View style={styles.botaoContainer}>
+              <TouchableOpacity style={styles.botaoDeletar} onPress={() => handleDelete(item.id)}>
+                <Text style={styles.botaoText}>Deletar</Text>
+              </TouchableOpacity>
+             
+            </View>
+          </View>
+        );
+      };
 
     return (
         <View style={styles.container}>
@@ -65,6 +87,8 @@ function ListagemRoupas(): React.JSX.Element {
                 <Text style={styles.headerText} >Ame Fashion</Text>
                 <Text style={styles.Textocima}></Text>
             </View>
+            <TextInput style={styles.pesquisa}/>
+            <TouchableOpacity style={styles.buttonPesquisar}/>
             <FlatList
                 data={roupas}
                 renderItem={renderItem}
@@ -73,7 +97,7 @@ function ListagemRoupas(): React.JSX.Element {
             />
             
 
-            <Footer/>
+
 
         </View>
     );
@@ -86,6 +110,35 @@ const styles = StyleSheet.create({
 
 
     },
+    botaoText: {
+        fontSize: 16,
+        color: '#fff',
+        textAlign: 'center',
+      },
+        botaoDeletar: {
+        backgroundColor: 'red',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 10,
+        height: 42,
+        width: '49%',
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      botaoEditar: {
+        backgroundColor: 'blue',
+        padding: 10,
+        borderRadius: 5,
+        marginTop: 10,
+        height: 42,
+        width: '49%', 
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      botaoContainer: {
+        flexDirection: 'row', 
+        justifyContent: 'space-between', 
+      },
     item: {
         backgroundColor: '#FF1493',
         padding: 20,
@@ -146,8 +199,21 @@ const styles = StyleSheet.create({
     Textocima:{
         fontSize:20,
         color: 'white'
+    },
+    pesquisa:{
+        borderWidth:5,
+        borderColor:'black',
+        borderRadius:10
+    },
+    buttonPesquisar:{
+        padding:10,
+        width:15,
+        height:10,
+        position:'absolute',
+        marginTop:105,
+        marginLeft:350,
+        backgroundColor:'red'
     }
-    
 })
 
 export default ListagemRoupas;

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Head from "../components/Head";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
@@ -17,41 +17,20 @@ interface Roupas {
 }
 
 function RoupasPesquisar(): React.JSX.Element {
+    const [roupas, setRoupas] = useState<Roupas[]>([]);
+    const [pesquisa, setPesquisa] = useState<string>('');
 
-    const navigation = useNavigation();
-
-    const roupas: Roupas[] = [
-        {
-            id: 1,
-            tecido: 'Algodão',
-            tamanho: 'M',
-            cor: 'Roxo',
-            categoria: 'Adulto',
-            fabricacao: 'China',
-            estacao: 'Inverno',
-            descricao: 'Roupa super quentinha',
-        },
-        {
-            id: 2,
-            tecido: 'Algodão',
-            tamanho: 'G',
-            cor: 'Rosa',
-            categoria: 'Kids',
-            fabricacao: 'Brasil',
-            estacao: 'Calor',
-            descricao: 'Roupa super confortável',
-        },
-    ]
-
+    useEffect(()=>{
+        PesquisarRoupas();
+    }, [])
 
     const PesquisarRoupas = async () => {
-        const [roupas, setRoupas] = useState<Roupas[]>([]);
         try {
-            const response = await axios.get('http://10.137.11.202:8000/api/pesquisarCategoria');
+            const response = await axios.get('http://10.137.11.203/vestuario/public/api/pesquisaCategoria');
             if (response.status === 200) {
-                console.log
+
                 setRoupas(response.data.data);
-                
+                console.log(response.data.data)
             }
         } catch (error) {
             console.log(error);
@@ -59,10 +38,10 @@ function RoupasPesquisar(): React.JSX.Element {
     }
 
 
-    const renderItem = ({ item }: {item: Roupas }) => {
+    const renderItem = ({ item }: { item: Roupas }) => {
         return (
             <TouchableOpacity style={styles.menuItem}
-             onPress={() => PesquisarRoupas}>
+                onPress={() => PesquisarRoupas}>
                 <View style={styles.itemDetails}>
                     <Text style={styles.tissue}>{item.tecido}</Text>
                     <Text style={styles.size}>{item.tamanho}</Text>
@@ -73,26 +52,38 @@ function RoupasPesquisar(): React.JSX.Element {
                 </View>
             </TouchableOpacity>
         );
-
-        <Footer/>
     }
 
     return (
         <View style={styles.container}>
-            <StatusBar backgroundColor={'red'} barStyle={'light-content'}/>
-            <Head/>
+            
+            <StatusBar backgroundColor={'red'} barStyle={'light-content'} />
+            <Head />
+            <Text style={styles.title}>Pesquisar</Text>
+            <TextInput style={styles.pesquisa}/>
+            <TouchableOpacity style={styles.buttonPesquisa}/>
             <FlatList
-               data={roupas}
-               renderItem={renderItem}
-               keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
-               contentContainerStyle={styles.menuList}
-               />
+                data={roupas}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id ? item.id.toString() : Math.random().toString()}
+                contentContainerStyle={styles.menuList}
+            />
+
+            <Footer />
         </View>
     );
 
 }
 
 const styles = StyleSheet.create({
+
+    title:{
+        fontSize:19,
+        fontWeight:'bold',
+        color:"black",
+        marginBottom:20,
+        textAlign:'center'
+    },
     container: {
         flex: 1
     },
@@ -110,7 +101,7 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
         borderRadius: 5
     },
-    itemDetails:{
+    itemDetails: {
         marginLeft: 10,
         flex: 1,
     },
@@ -144,8 +135,22 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold'
     },
-    menuList:{
+    menuList: {
         flexGrow: 1
+    },
+    pesquisa:{
+        borderWidth:5,
+        borderColor:'black',
+        borderRadius:10
+    },
+    buttonPesquisa:{
+        padding:10,
+        width:15,
+        height:10,
+        position:'absolute',
+        marginTop:140,
+        marginLeft:350,
+        backgroundColor:'red'
     }
 })
 
