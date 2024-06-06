@@ -1,185 +1,133 @@
 
-import React, { useEffect, useState } from "react";
-import { StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react"; // Removido FormEvent
+import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Head from "../components/Head";
+import Footer from "../components/Footer";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { TextInput } from "react-native-gesture-handler";
+import axios from "axios";
 
-
-
-interface Roupas {
-    id: number;
-    tecido: string;
-    tamanho: string;
-    cor: string;
-    categoria: string;
-    fabricacao: string;
-    estacao: string;
-    descricao: string;
-
-}
-
-const navigation = useNavigation();
-const route = useRoute();
-
-
-const EditarRoupas: React.FC = () => {
-    
+const Editar: React.FC = () => {
+    const [id, setId] = useState<string>('');
     const [tecido, setTecido] = useState<string>('');
-    const [tamanho, setTamanho] = useState<string>('');
-    const [cor, setCor] = useState<string>('');
-    const [categoria, setCategoria] = useState<string>('');
-    const [fabricacao, setFabricacao] = useState<string>('');
-    const [estacao, setEstacao] = useState<string>('');
-    const [descricao, setDescricao] = useState<string>('');
+    const [tamanho, SetTamanho] = useState<string>('');
+    const [cor, SetCor] = useState<string>('');
+    const [categoria, SetCategoria] = useState<string>('');
+    const [fabricacao, SetFabricação] = useState<string>('');
+    const [descricao, SetDescricao] = useState<string>('');
+    const [estacao, SetEstacao] = useState<string>('');
 
-    
+    const navigation = useNavigation();
+    const route = useRoute();
+
     useEffect(() => {
-        const { roupas } = route.params;
+        const { item } = route.params;
+        setId(item.id);
+        setTecido(item.tecido);
+        SetTamanho(item.tamanho);
+        SetCategoria(item.categoria);
+        SetCor(item.cor);
+        SetFabricação(item.categoria);
+        SetEstacao(item.estacao);
+        SetDescricao(item.descricao);
+    }, []);
 
-        setTecido(roupas.tecido);
-        setTamanho(roupas.tamanho);
-        setCor(roupas.cor);
-        setCategoria(roupas.categoria);
-        setFabricacao(roupas.fabricacao);
-        setEstacao(roupas.estacao);
-        setDescricao(roupas.descricao);
-    })
-
+    const atualizar = () => {
+        const dadosDasRoupas = {
+            id: id,
+            tecido: tecido,
+            tamanho: tamanho,
+            categoria: categoria,
+            cor: cor,
+            fabricacao: fabricacao,
+            estacao: estacao,
+            descricao: descricao,
+           
+        };
+        axios.put("'http://10.137.11.203/vestuario/public/api/editar", dadosDasRoupas, {
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            console.log(response.data);
+            navigation.goBack(); // redireciona para a tela anterior após a atualização bem-sucedida
+        }).catch(error => {
+            console.error(error);
+        });
+    }
 
     return (
         <View style={styles.container}>
-        <StatusBar backgroundColor='red' barStyle="light-content" />
-        <Head />
-        <View style={styles.form}>
-            <TextInput
-                style={styles.input}
-                value={tecido}
-                onChangeText={setTecido}
-            />
+            <StatusBar backgroundColor='#3a415a' barStyle="light-content" />
+            <Head />
+            <View>
+                <TextInput value={tecido}
+                 onChangeText={setTecido}
+                  style={styles.input} />
 
-            <TextInput
-                style={styles.input}
-                value={tamanho}
-                onChangeText={setTamanho}
-            />
+                <TextInput value={tamanho}
+                 onChangeText={SetTamanho}
+                   style={styles.input} />
 
-            <TextInput
-                style={styles.input}
-                value={cor}
-                onChangeText={setCor}
-            />
+                <TextInput value={categoria}
+                 onChangeText={SetCategoria}
+                  style={styles.input} />
 
-            <TextInput
-                style={styles.input}
-                value={categoria}
-                onChangeText={setCategoria}
-            />
+                <TextInput value={cor}
+                 onChangeText={SetCor}
+                  style={styles.input} />
 
-            <TextInput
-                style={styles.input}
-                value={fabricacao}
-                onChangeText={setFabricacao}
-            />
+                <TextInput value={fabricacao}
+                 onChangeText={SetFabricação}
+                  style={styles.input} />
 
-            <TextInput
-                style={styles.input}
-                value={estacao}
-                onChangeText={setEstacao}
-            />
+                <TextInput value={estacao}
+                 onChangeText={SetEstacao}
+                  style={styles.input} />
 
-            <TextInput
-                style={styles.input}
-                value={descricao}
-                onChangeText={setDescricao}
-            />
-
-
-
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Voltar</Text>
-            </TouchableOpacity>
-
-            <View style={styles.menuList} />
+                <TextInput value={descricao}
+                 onChangeText={SetDescricao}
+                  multiline
+                   style={styles.input} />
+                   
+                <TouchableOpacity onPress={atualizar} style={styles.button}>
+                    <Text style={styles.buttonText}>Editar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={styles.button}>
+                    <Text style={styles.buttonText}>Voltar</Text>
+                </TouchableOpacity>
+                <Footer />
+            </View>
         </View>
-    </View>
-
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 1
     },
-
-    header: {
-        backgroundColor: "red",
-        paddingVertical: 10,
-        alignItems: 'center'
-    },
-
-    headerText: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: 'white'
-    },
-
-    form: {
-        padding: 10,
-        backgroundColor: '#f0f0f0',
-        marginBottom: 10
-    },
-
     input: {
+        margin: 10,
         height: 40,
-        borderColor: 'gray',
+        borderColor: 'black',
         borderWidth: 1,
-        marginBottom: 10,
+        marginBottom: 5,
         paddingHorizontal: 10,
         borderRadius: 10
     },
-
-    imageButton: {
-        backgroundColor: 'red',
+    button: {
+        backgroundColor: '#3a415a',
         padding: 10,
         borderRadius: 5,
         alignItems: 'center',
-        marginBottom: 10
-    },
-
-    imageButtonText: {
-        color: 'white',
-        fontWeight: 'bold'
-    },
-
-    imagemSelecionada: {
-        width: 200,
-        height: 200,
-        resizeMode: 'cover',
-        borderRadius: 5,
         marginBottom: 10,
+        borderColor: 'white'
     },
-
-    alinhamentoImagemSelecionada: {
-        alignItems: 'center'
-    },
-
-    button: {
-        backgroundColor: 'red',
-        padding: 10,
-        borderRadius: 5,
-        alignItems: 'center'
-    },
-
     buttonText: {
         color: 'white',
         fontWeight: 'bold'
-    },
-
-    menuList: {
-        flexGrow: 1
     }
+});
 
-
-})
-
-export default EditarRoupas;
+export default Editar;

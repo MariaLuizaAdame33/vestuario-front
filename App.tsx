@@ -3,9 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import CadastroScreen from './src/screens/CadastroScreen';
 import EditarRoupas from './src/screens/EditarRoupas';
 import ListagemRoupas from './src/screens/ListagemRoupas';
-import PesquisarRoupas from './src/screens/PesquisarRoupas';
-import Home from './src/screens/Home';
-import Profile from './src/screens/Profile';
+
 
 
 const Stack = createStackNavigator();
@@ -16,6 +14,8 @@ function App(): React.ReactElement {
     <NavigationContainer>
         <Stack.Navigator>
         <Stack.Screen name='Listagem' component={ListagemRoupas} options={{ headerShown:false }}/>
+        <Stack.Screen name='editar' component={EditarRoupas} options={{ headerShown:false }}/>
+        <Stack.Screen name='Cadastro' component={CadastroScreen} options={{ headerShown:false }}/>
         </Stack.Navigator>
       </NavigationContainer>
     );

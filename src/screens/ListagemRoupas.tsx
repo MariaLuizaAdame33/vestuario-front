@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import {  FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { TextInput } from 'react-native-gesture-handler';
+import Footer from '../components/Footer';
 
 
 interface Roupas {
@@ -23,11 +24,32 @@ function ListagemRoupas(): React.JSX.Element {
 
     const [roupas, setRoupas] = useState<Produto[]>([]);
     const [pesquisa, setPesquisa] = useState<string>('');
+
     
 
     useEffect(() => {
+        if (pesquisa == "") {
         ListagemRoupas();
+    }
     }, []);
+
+    const buscar = async () => {
+
+        try {
+            const response = await axios.get('http://10.137.11.203/vestuario/public/api/pesquisaCategoria/' + pesquisa);
+            console.log('buscando roupas ')
+            setRoupas(response.data.data)
+            console.log(roupas)
+            if (response.data.status === true) {
+
+            } else {
+                console.log('Erro na busca:', response.data.message);
+            }
+        } catch (error) {
+            console.log('Erro na requisição:', error);
+        }
+    };
+
 
 
     const ListagemRoupas = async () => {
@@ -48,14 +70,10 @@ function ListagemRoupas(): React.JSX.Element {
           const response = await axios.get('http://10.137.11.203/vestuario/public/api/excluir/'+id);
           
           console.log(response.data);
-          //setRoupas(roupas.filter((roupa) => roupa.id !== id));
-          //setFilteredRoupas(filteredRoupas.filter((roupa) => roupa.id !== id));
+         
         } catch (error) {
             console.log(error)
-          // console.error(`Erro: ${error.message}`);
-          // if (error.response) {
-          //   console.error(`Status: ${error.response.status} ${error.response.statusText}`);
-          // }
+         
         }
       };
 
@@ -70,11 +88,17 @@ function ListagemRoupas(): React.JSX.Element {
             <Text style={styles.Texto1}>{item.categoria}</Text>
             <Text style={styles.Texto1}>{item.fabricacao}</Text>
             <Text style={styles.Texto1}>{item.estacao}</Text>
+            <Text style={styles.Texto1}>{item.descricao}</Text>
             <View style={styles.botaoContainer}>
               <TouchableOpacity style={styles.botaoDeletar} onPress={() => handleDelete(item.id)}>
                 <Text style={styles.botaoText}>Deletar</Text>
               </TouchableOpacity>
              
+            </View>
+            <View>
+            <TouchableOpacity onPress={() => navigation.navigate('editar', { item })} style={styles.botaoEditar}>
+              <Text style={styles.botaoText}>Editar</Text>
+            </TouchableOpacity>
             </View>
           </View>
         );
@@ -87,8 +111,15 @@ function ListagemRoupas(): React.JSX.Element {
                 <Text style={styles.headerText} >Ame Fashion</Text>
                 <Text style={styles.Textocima}></Text>
             </View>
-            <TextInput style={styles.pesquisa}/>
-            <TouchableOpacity style={styles.buttonPesquisar}/>
+            <TextInput
+          style={styles.searchInput}
+          placeholder="Pesquisar..."
+          value={pesquisa}
+          onChangeText={(text) => setPesquisa(text)}
+        />
+                    <TouchableOpacity style={styles.Pesquisa} onPress={() => buscar()}><Text>Pesquisar</Text></TouchableOpacity>
+
+           
             <FlatList
                 data={roupas}
                 renderItem={renderItem}
@@ -97,7 +128,7 @@ function ListagemRoupas(): React.JSX.Element {
             />
             
 
-
+          <Footer/>
 
         </View>
     );
@@ -110,6 +141,25 @@ const styles = StyleSheet.create({
 
 
     },
+    editar: {
+        width: 50,
+        height: 50,
+        position: 'absolute',
+        marginHorizontal: 210,
+        marginVertical: -190
+    },
+    searchInput: {
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginTop: 10,
+        marginBottom: 10,
+        marginHorizontal: 20,
+      },
+
+
     botaoText: {
         fontSize: 16,
         color: '#fff',
@@ -213,7 +263,17 @@ const styles = StyleSheet.create({
         marginTop:105,
         marginLeft:350,
         backgroundColor:'red'
-    }
+    },
+    Pesquisa: {
+        padding: 15,
+        backgroundColor: '#43ec5f',
+        width: 80,
+        height: 10,
+        position: 'absolute',
+        top: 100,
+        right: 30,
+        borderRadius: 10,
+    },
 })
 
 export default ListagemRoupas;
